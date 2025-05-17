@@ -1,0 +1,61 @@
+import pandas as pd  
+df = pd.read_csv("/Users/e_information/员工信息表.csv") 
+
+##数据替换 
+ 
+# 使用replace()将"工资"列的低"，"中"，"高"替换为0，1，2 
+df["工资"] = df["工资"].replace({'低': 0, '中': 1, '高': 2}) 
+ 
+## 一 决策树的搭建 
+ # 1 读取x,y的数据 
+# 使用drop()函数删除"离职"列，剩余的数据作为自变量x 
+x = df.drop(columns="离职") 
+# 将"离职"列，作为因变量y 
+y = df["离职"] 
+
+# 2 划分训练集集合测试集 
+# 导入sklearn.model_selection模块中的train_test_split函数 
+from sklearn.model_selection import train_test_split 
+# 使用train_test_split()函数划分训练集和测试集 
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=123)
+
+# 3 模型法初始化和训练 
+# 导入sklearn.tree模块中的分类决策树模型DecisionTreeClassifier 
+from sklearn.tree import DecisionTreeClassifier 
+# 使用DecisionTreeClassifier()初始化模型 
+# 并设置参数max_depth=3,random_state=123，赋值给model 
+model = DecisionTreeClassifier(max_depth=3,random_state=123) 
+# 使用fit()函数训练模型 
+model.fit(x_train, y_train)
+
+## 二 预测选择的车型 
+# 将x_test传入使用predict()函数预测，将结果赋值给y_pred 
+y_pred = model.predict(x_test) 
+# 通过切片，输出y_pred的前10项 
+print(y_pred[0:10]) 
+#  通过属性.values结合切片，读取y_test的前10项，并赋值给y_test_10 
+y_test_10=y_test.values[0:10] 
+#  通过[:,0]的索引方式，读取y_test_10的第一列数据，并输出 
+print(y_test_10[:,0]) 
+
+## 三 分类准确率函数 
+ 
+#1  输出准确率 
+# 导入sklearn.metrics模块中的准确率函数accuracy_score 
+from sklearn.metrics import accuracy_score 
+# 使用accuracy_score()函数计算准确率，并赋值给score 
+score = accuracy_score(y_pred,y_test,normalize = True) 
+# 输出score 
+print(score) 
+# 2 输出准确率样本 
+# 使用accuracy_score()函数计算准确的样本数，并赋值给num 
+num = accuracy_score(y_pred,y_test,normalize = False) 
+# 输出num 
+print(num) 
+## 四 预测是否离职概率 
+# 将x_test传入使用predict_proba()函数预测，将结果赋值给y_pred_proba 
+y_pred_proba = model.predict_proba(x_test) 
+# 通过切片，输出y_pred_proba的前10项 
+print(y_pred_proba[0:10]) 
+# 输出y_pred_proba的第2列离职概率列数据（读取数组列数） 
+print(y_pred_proba[:,1])
