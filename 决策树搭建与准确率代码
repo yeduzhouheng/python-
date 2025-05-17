@@ -56,7 +56,8 @@ num = accuracy_score(y_pred,y_test,normalize = False)
 # 输出num 
 print(num)
 
-## 四 预测选择车型概率 
+## 四 预测选择车型概率
+
 # 将x_test传入使用predict_proba()函数预测，将结果赋值给y_pred_proba 
 y_pred_proba = model.predict_proba(x_test) 
 # 通过切片，输出y_pred_proba的前10项 
