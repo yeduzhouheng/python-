@@ -1,17 +1,18 @@
 import pandas as pd  
-df = pd.read_csv("/Users/e_information/员工信息表.csv") 
+df = pd.read_csv("/Users/e_information/交付信息表.csv") 
 
 ##数据替换 
  
-# 使用replace()将"工资"列的低"，"中"，"高"替换为0，1，2 
-df["工资"] = df["工资"].replace({'低': 0, '中': 1, '高': 2}) 
+# 使用replace()将"顾客年龄"列的"小于30岁"，"30岁至60岁"，"大于60岁"替换为0，1，2 
+df["顾客年龄"] = df["顾客年龄"].replace({'小于30岁': 0, '30岁至60岁': 1, '大于60岁': 2}) 
  
-## 一 决策树的搭建 
- # 1 读取x,y的数据 
-# 使用drop()函数删除"离职"列，剩余的数据作为自变量x 
-x = df.drop(columns="离职") 
-# 将"离职"列，作为因变量y 
-y = df["离职"] 
+## 一 决策树的搭建
+
+# 1 读取x,y的数据 
+# 使用drop()函数删除"车型"列，剩余的数据作为自变量x 
+x = df.drop(columns="车型") 
+# 将"车型"列，作为因变量y 
+y = df["车型"] 
 
 # 2 划分训练集集合测试集 
 # 导入sklearn.model_selection模块中的train_test_split函数 
@@ -29,6 +30,7 @@ model = DecisionTreeClassifier(max_depth=3,random_state=123)
 model.fit(x_train, y_train)
 
 ## 二 预测选择的车型 
+
 # 将x_test传入使用predict()函数预测，将结果赋值给y_pred 
 y_pred = model.predict(x_test) 
 # 通过切片，输出y_pred的前10项 
@@ -46,13 +48,15 @@ from sklearn.metrics import accuracy_score
 # 使用accuracy_score()函数计算准确率，并赋值给score 
 score = accuracy_score(y_pred,y_test,normalize = True) 
 # 输出score 
-print(score) 
+print(score)
+
 # 2 输出准确率样本 
 # 使用accuracy_score()函数计算准确的样本数，并赋值给num 
 num = accuracy_score(y_pred,y_test,normalize = False) 
 # 输出num 
-print(num) 
-## 四 预测是否离职概率 
+print(num)
+
+## 四 预测选择车型概率 
 # 将x_test传入使用predict_proba()函数预测，将结果赋值给y_pred_proba 
 y_pred_proba = model.predict_proba(x_test) 
 # 通过切片，输出y_pred_proba的前10项 
