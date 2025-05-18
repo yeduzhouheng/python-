@@ -1,0 +1,97 @@
+##step1 绘制散点图，确定相关系数
+
+#1.1绘制散点图 
+# 导入pandas模块 
+import pandas as pd  
+# 导入matplotlib.pyplot，简称plt 
+import matplotlib.pyplot as plt  
+# 通过 rcParams 参数将字体设置为 Arial Unicode MS  
+plt.rcParams["font.sans-serif"] = "Arial Unicode MS" 
+# 读取文件，赋值给df 
+df = pd.read_csv("/Users/ad/exposure_to_new.csv") 
+# 使用plt.scatter()函数 
+# 以df["exposure"]为x轴的值和df["new_user"]为y轴的值，绘制散点图 
+plt.scatter(df["exposure"], df["new_user"]) 
+# 使用plt.xlabel()函数，将x轴标题设置为"曝光量" 
+plt.xlabel("曝光量") 
+# 使用plt.ylabel()函数，将y轴标题设置为"新增用户量" 
+plt.ylabel("新增用户量") 
+# 使用plt.show()函数显示图像 
+plt.show() 
+
+#1.2 确定相关系数(r=0.9923775641391593)，高度正相关 
+# 使用corr()，计算"exposure"和"new_user"这两列的相关系数，赋值给变量r 
+r = df["expo## step4 检验回归模型 
+ 
+
+##step2 确定自变量（曝光量）和因变量（新增用户数量) 
+
+ 
+##step3 建立回归模型 
+ 
+#3.1 初始化模型   3.2 训练模型 
+# 导入sklearn.linear_model模块中的LinearRegression类 
+from sklearn.linear_model import LinearRegression 
+#  以二维结构读取"exposure"这一列，作为自变量x 
+x = df[["exposure"]] 
+# 以二维结构读取"new_user"这一列，作为因变量y 
+y = df[["new_user"]] 
+# 使用LinearRegression()初始化模型，赋值给lr 
+lr = LinearRegression() 
+# 使用自变量x和因变量y，训练线性回归模型lr 
+lr.fit(x,y) 
+ 
+# 3.3查看系数和截距 
+# 输出模型lr的coef_属性 
+print(lr.coef_) 
+# 输出模型lr的intercept_属性 
+print(lr.intercept_) 
+# 使用coef_[0][0],获取系数b的值 
+b = lr.coef_[0][0] 
+# 使用intercept_[0],获取截距a的值 
+a = lr.intercept_[0] 
+# 格式化输出，f"该线性回归模型为：Y={a}+{b}*X" 
+print(f"该线性回归模型为：Y={a}+{b}*X")
+
+
+## step4 检验回归模型 
+ 
+# 4.1绘制原始数据散点图和线性回归模型折线图，观察准确性（前面已导入模块，设置字体） 
+# 绘制散点图,df["exposure"]作为x轴，df["new_user"]作为y轴数据 
+# 设置图例为"原始数据" 
+plt.scatter(df['exposure'],df['new_user'],label='原始数据') 
+# 绘制线性回归模型折线图,df["exposure"]作为x轴，b*df["exposure"]+a作为y轴数据 
+# 设置颜色为"orange"，设置图例为"线性回归模型" 
+plt.plot(df['exposure'],b*df['exposure']+a,color='orange',label='线性回归 
+模型') 
+# 使用plt.xlabel()函数，将x轴标题设置为"曝光量" 
+plt.xlabel("曝光量") 
+# 使用plt.ylabel()函数，将y轴标题设置为"新增用户量" 
+plt.ylabel("新增用户量") 
+# 使用plt.legend()函数显示图例 
+plt.legend() 
+#使用plt.show()函数显示图像 
+plt.show() 
+ 
+# 4.2取得模型判定系数(0.9848) 
+# 将x,y传入score( )函数，对模型打分,获取判定系数r2 
+r2 = lr.score(x,y) 
+# 输出r2 
+print(r2) 
+ 
+
+## step5  利用模型预测 
+ 
+# 输出a+b*200000的值 
+print(a+b*200000) 
+# 将200000以二维结构传入传入predict()函数进行预测，并赋值给y_predict 
+y_predict = lr.predict([[200000]]) 
+# 输出此时的预测结果y_predict 
+print(y_predict) 
+ 
+# 将200000，250000,300000以二维结构传入传入predict()函数进行预测，并赋值给y_predict 
+y_predict = lr.predict([[200000],[250000],[300000]]) 
+# 输出此时的预测结果y_predict 
+print(y_predict)
+
+
