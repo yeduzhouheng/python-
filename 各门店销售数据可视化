@@ -1,0 +1,48 @@
+# 使用import导入pandas模块，简称为pd 
+import pandas as pd 
+ 
+'''读取文件''' 
+data = pd.read_csv("/Users/各门店销售数据.csv") 
+  
+
+'''数据的处理与清洗''' 
+# 1. 识别并处理缺失值 
+quanNull= data[data["订单量"].isnull()] 
+data.drop(index=quanNull.index, inplace=True) 
+# 2. 识别并处理异常值 
+data = data[(data["订单量"]>0) & (data["订单量"]<100000000)] 
+# 3. 识别并处理重复值 
+dup = data[data.duplicated()] 
+# 4. 数据类型转换 
+data["订单日期"] = pd.to_datetime(data["订单日期"]) 
+
+'''销售情况分析''' 
+# 2. 分析不同地区销售情况 
+# 使用set_index()函数，把"订单日期"列设置为index 
+data = data.set_index("订单日期") 
+ 
+# 使用groupby()、resample()和sum()函数 
+# 计算每个 门店每月的销售额总和 
+# 将结果赋值给变量groupByArea 
+groupByArea =data["销售额"].groupby(data['门店']).resample("M").sum() 
+
+# 使用unstack()函数将groupByArea按照"订单日期"重新排列 
+groupByArea = groupByArea.unstack("订单日期") 
+ 
+# 导入matplotlib.pyplot，并使用"plt"作为该模块的简写 
+import matplotlib.pyplot as plt 
+ 
+# 通过给 plt.rcParams["font.sans-serif"] 赋值 
+# 将字体设置为 Arial Unicode MS  
+plt.rcParams["font.sans-serif"] = "Arial Unicode MS" 
+ 
+# 将groupByArea变量中columns转换为"%M"的格式 
+groupByArea.columns = groupByArea.columns.strftime("%M") 
+
+# 对groupByArea变量使用plot.bar()函数绘制簇形柱状图 
+groupByArea.plot.bar() 
+ 
+# 使用plt.show()函数显示图像 
+plt.show()
+
+
